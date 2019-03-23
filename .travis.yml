@@ -1,6 +1,16 @@
+sudo: required
+dist: trusty
+
 before_install:
 - sudo apt-get update -qq
 - sudo apt-get install -y --no-install-recommends texlive-full
+
 script:
 - mkdir build
 - pdflatex -interaction=nonstopmode -halt-on-error -output-directory build mydoc.tex
+
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file: "mydoc.pdf"
+  skip_cleanup: true
