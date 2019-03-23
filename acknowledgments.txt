@@ -1,0 +1,6 @@
+
+
+https://stackoverflow.com/questions/12343452/how-to-publish-artifacts-in-travis-ci
+
+
+https://tex.stackexchange.com/questions/398830/how-to-build-my-latex-automatically-using-travis-ci
