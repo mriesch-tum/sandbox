@@ -5,6 +5,8 @@ script:
 - touch mydoc.pdf
 - ls
 - pwd
+- cd
+- pwd
 deploy:
   provider: releases
   api_key:
@@ -12,3 +14,7 @@ deploy:
   on:
     repo: mriesch-tum/sandbox
     branch: master
+  file:
+  - /etc/hostname
+  - mydoc.pdf
+  - ~/build/mriesch-tum/sandbox/mydoc.pdf
