@@ -12,3 +12,4 @@ deploy:
   file: /etc/hostname
   on:
     repo: mriesch-tum/sandbox
+    branch: master
