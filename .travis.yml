@@ -12,6 +12,7 @@ deploy:
   on:
     repo: mriesch-tum/sandbox
     tags: true
+  skip_cleanup: true
   file:
   - /etc/hostname
   - mydoc.pdf
