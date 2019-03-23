@@ -1,6 +1,6 @@
 before_install:
 - sudo apt-get update -qq
-- sudo apt-get install texlive-latex-full
+- sudo apt-get install -y --no-install-recommends texlive-full
 script:
 - mkdir build
-- pdflatex -output-directory build mydoc.tex
+- pdflatex -interaction=nonstopmode -halt-on-error -output-directory build mydoc.tex
