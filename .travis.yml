@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 before_install:
 script:
-- touch mydoc.pdf
+- cat /etc/hostname > gunter.txt
 - ls
 - pwd
 deploy:
@@ -14,6 +14,4 @@ deploy:
     tags: true
   skip_cleanup: true
   file:
-  - /etc/hostname
-  - mydoc.pdf
-  - /home/travis/build/mriesch-tum/sandbox/mydoc.pdf
+    gunter.txt
