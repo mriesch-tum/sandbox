@@ -23,28 +23,35 @@ OUT_DIR = fig
 OUT_ZIP = fig.zip
 DPI = 600
 
-# SVG input files
+# input files
 SVG_SOURCES = $(wildcard $(SRC_DIR)/*/*.svg)
-# SVG output files
+TEX_SOURCES = $(wildcard $(SRC_DIR)/*/*.tex)
+
+# output files
 SVG2PDF = $(SVG_SOURCES:$(SRC_DIR)/%.svg=$(OUT_DIR)/%.pdf)
-SVG2PNG = $(SVG_SOURCES:$(SRC_DIR)/%.svg=$(OUT_DIR)/%.png)
-
-# TikZ input files
-TIK_SOURCES = $(wildcard $(SRC_DIR)/*/*.tikz)
-# TikZ output files
-TIK2PDF = $(TIK_SOURCES:$(SRC_DIR)/%.tikz=$(OUT_DIR)/%.pdf)
-TIK2PNG = $(TIK_SOURCES:$(SRC_DIR)/%.tikz=$(OUT_DIR)/%.png)
-
-# TikZ auxiliary TeX files
-TIK2TEXPDF = $(TIK_SOURCES:$(SRC_DIR)/%.tikz=$(OUT_DIR)/%.tex)
-TIK2TEXPNG = $(TIK_SOURCES:$(SRC_DIR)/%.tikz=$(OUT_DIR)/%.png.tex)
+TEX2PDF = $(TEX_SOURCES:$(SRC_DIR)/%.tex=$(OUT_DIR)/%.pdf)
+COMPPDF = $(SVG2PDF) $(TEX2PDF)
+COMPEPS = $(COMPPDF:%.pdf=%.eps)
+COMPPNG = $(COMPPDF:%.pdf=%.png)
+COMPEMF = $(COMPPDF:%.pdf=%.emf)
 
 # phony targets
-all: $(TIK2PDF) $(TIK2PNG) #  $(SVG2PNG)
+all: pdf eps png emf
+
+emf: $(COMPEMF)
+	@echo "Build emf complete."
+
+eps: $(COMPEPS)
+	@echo "Build eps complete."
+
+pdf: $(COMPPDF)
+	@echo "Build pdf complete."
+
+png: $(COMPPNG)
+	@echo "Build png complete."
 
 install: $(TIK2PDF) $(SVG2PNG)
-	rm ./$(OUT_ZIP)
-	zip $(OUT_ZIP) $(TIK2PDF) $(SV2PNG)
+	zip -FSr $(OUT_ZIP) $(COMPEPS) $(COMPPDF) $(COMPPNG) $(COMPEMF)
 
 clean:
 	@rm -rf ./$(OUT_DIR) ./$(OUT_ZIP)
@@ -52,39 +59,26 @@ clean:
 distclean: clean
 	@rm -f *~ *#
 
-.PHONY: all install clean distclean
+.PHONY: all emf eps pdf png install clean distclean
 
-# PNG generation from SVG files
-# TODO check whether inkscape is available? -> separate target?
-$(SVG2PNG): $(OUT_DIR)/%.png: $(SRC_DIR)/%.svg
+# PDF generation from SVG files
+$(SVG2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.svg
 	@mkdir -p $(dir $@)
-	@inkscape --export-dpi=$(DPI) --export-area-drawing \
-		--export-png=$@ $<
-
-# Auxiliary TeX file generation for TikZ->PDF
-$(TIK2TEXPDF): $(OUT_DIR)/%.tex: templates/standalone.tex
-	@mkdir -p $(dir $@)
-	cat templates/standalone.tex | \
-	sed s+TIKZ_FILENAME+../../$(@:$(OUT_DIR)/%.tex=$(SRC_DIR)/%.tikz)+ > $@
-
-# Auxiliary TeX file generation for TikZ->PNG
-$(TIK2TEXPNG): $(OUT_DIR)/%.png.tex: templates/standalone.tex
-	@mkdir -p $(dir $@)
-	echo "\\begin{document}" > $@
-
-
-#	cat templates/standalone.tex | \
-#	sed s+TIKZ_FILENAME+../../$(@:$(OUT_DIR)/%.png.tex=$(SRC_DIR)/%.tikz)+ \
-#	sed s+documentclass{standalone}+documentclass[convert={density=$(DPI),size=1080x800,outext=.png}]{standalone}+ > $@
-
-
+	@inkscape --export-area-drawing --export-pdf=$@ $<
 
 # PDF generation from TikZ files
-# TODO check whether LaTeX is available? -> separate target?
-$(TIK2PDF): $(OUT_DIR)/%.pdf: $(OUT_DIR)/%.tex $(SRC_DIR)/%.tikz
-	@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $<
+$(TEX2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.tex
+	@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $< \
+	> /dev/null
 
-# PNG generation from TikZ files
-# TODO check whether LaTeX is available? -> separate target?
-$(TIK2PNG): $(OUT_DIR)/%.png: $(OUT_DIR)/%.png.tex $(SRC_DIR)/%.tikz
-	@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $<
+# PNG generation from PDF files
+$(COMPPNG): %.png: %.pdf
+	convert -density $(DPI) $< $@
+
+# EPS generation from PDF files
+$(COMPEPS): %.eps: %.pdf
+	pdftops -eps $<
+
+# EMF generation from PDF files
+$(COMPEMF): %.emf: %.pdf
+	@pstoedit -q -adt -pta -f "emf" $< $@ > /dev/null || echo "Ignore EMF!"
