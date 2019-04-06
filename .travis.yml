@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: cosmic
 before_install:
 - sudo apt-get update -qq
 - sudo apt-get install -y --no-install-recommends texlive-science
