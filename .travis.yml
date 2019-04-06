@@ -1,0 +1,20 @@
+sudo: required
+dist: trusty
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -y --no-install-recommends texlive-science
+- sudo apt-get install -y --no-install-recommends texlive-pictures
+- sudo apt-get install -y --no-install-recommends libemf
+- sudo apt-get install -y --no-install-recommends inkscape
+script:
+- make
+- make install
+deploy:
+  provider: releases
+  api_key:
+    secure: imaBwN0AWOaYDGk94bRyfGvpHwshx4ByMh/T/IJLU9Th8wL3kbiUuMqgq+1p46HK4p4C91UfxIuxNGbXcDW3xF9IkUCLers02DP5h16qCsHURVdwvuCRWclynKPqOwSlOCOFOqf+fq4dTm0PI976hiKE9whRBjHPNLRS8TbajK8mREjHbZasIFNiejFy2Icysdq6cY24/MrwZNhjukBYB7cJ23dhHOYq/uwYjxDxrySidS3cUFexZcjn5ohzLKjCseaB3K7CsEhTS5Zw4eM+u8WFRsKx7rXT4pPZMOsUIFko4+BrOywuxIQgc6KmafhT2wq8iJTPeZ3Eyl1f05RtHgMVZdupqd1BZFmBRMLSjn8VBYYGLSRrav49WO5RXN+PCDq42HMBsZsQ2mJOU2Eds/LrigBEAApdAIuIUelm8VM4QcuT4cEfnHO0b0CuxnbdQTi4GH41hNQbula6YXUnJm7gEqyM5//QL7YkmUfVXewapiGrOF9767cFElRuCaL+hmEvYdX1RQ1MTUuX0BWpfUGM5uofxlB6ktJmWUiK3lpoJuJ4PAd9rHzuFIQRGwnqBMuByhQ2VQtmqqkA/zpEy22SEfcDr2hQtOX10pSXTmojiXumBCvPpn8WEViFgrZDFltRW/n6ZD3KzoxEQNRl9PY5JTe0xTXAXOjr0p1gUWY=
+  on:
+    repo: mriesch-tum/sandbox
+    tags: true
+  skip_cleanup: true
+  file: fig.zip
