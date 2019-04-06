@@ -68,7 +68,10 @@ $(SVG2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.svg
 
 # PDF generation from TikZ files
 $(TEX2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.tex
-	@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $< \
+	@latexmk -outdir=$(dir $@) -pdf -interaction=nonstopmode $<
+
+
+#@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $< \
 	> /dev/null
 
 # PNG generation from PDF files
