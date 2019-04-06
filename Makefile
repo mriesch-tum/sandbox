@@ -84,6 +84,8 @@ $(COMPEPS): %.eps: %.pdf
 
 # EMF generation from PDF files
 $(COMPEMF): %.emf: %.pdf
-	@pstoedit -q -adt -pta -f "emf" $< $@
+	@inkscape --export-area-drawing --export-emf=$@ $<
+
+#	@pstoedit -q -adt -pta -f "emf" $< $@
 
 #> /dev/null || echo "Ignore EMF!"
