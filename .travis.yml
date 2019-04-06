@@ -3,7 +3,7 @@ dist: cosmic
 before_install:
 - sudo apt-get update -qq
 - sudo apt-get install -y --no-install-recommends texlive-science
-  texlive-pictures inkscape
+  texlive-pictures latexmk inkscape
 script:
 - make
 - make install
