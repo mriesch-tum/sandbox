@@ -21,7 +21,7 @@
 SRC_DIR = src
 OUT_DIR = fig
 OUT_ZIP = fig.zip
-DPI = 600
+DPI = 900
 
 # input files
 SVG_SOURCES = $(wildcard $(SRC_DIR)/*/*.svg)
@@ -33,13 +33,9 @@ TEX2PDF = $(TEX_SOURCES:$(SRC_DIR)/%.tex=$(OUT_DIR)/%.pdf)
 COMPPDF = $(SVG2PDF) $(TEX2PDF)
 COMPEPS = $(COMPPDF:%.pdf=%.eps)
 COMPPNG = $(COMPPDF:%.pdf=%.png)
-COMPEMF = $(COMPPDF:%.pdf=%.emf)
 
 # phony targets
-all: pdf eps png emf
-
-emf: $(COMPEMF)
-	@echo "Build emf complete."
+all: pdf eps png
 
 eps: $(COMPEPS)
 	@echo "Build eps complete."
@@ -51,7 +47,7 @@ png: $(COMPPNG)
 	@echo "Build png complete."
 
 install: $(TIK2PDF) $(SVG2PNG)
-	zip -FSr $(OUT_ZIP) $(COMPEPS) $(COMPPDF) $(COMPPNG) $(COMPEMF)
+	zip -FSr $(OUT_ZIP) $(COMPEPS) $(COMPPDF) $(COMPPNG)
 
 clean:
 	@rm -rf ./$(OUT_DIR) ./$(OUT_ZIP)
@@ -59,7 +55,7 @@ clean:
 distclean: clean
 	@rm -f *~ *#
 
-.PHONY: all emf eps pdf png install clean distclean
+.PHONY: all eps pdf png install clean distclean
 
 # PDF generation from SVG files
 $(SVG2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.svg
@@ -68,10 +64,7 @@ $(SVG2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.svg
 
 # PDF generation from TikZ files
 $(TEX2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.tex
-	@latexmk -outdir=$(dir $@) -pdf -interaction=nonstopmode $<
-
-
-#@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $< \
+	@latexmk -quiet -outdir=$(dir $@) -pdf -interaction=nonstopmode $< \
 	> /dev/null
 
 # PNG generation from PDF files
@@ -81,11 +74,3 @@ $(COMPPNG): %.png: %.pdf
 # EPS generation from PDF files
 $(COMPEPS): %.eps: %.pdf
 	pdftops -eps $<
-
-# EMF generation from PDF files
-$(COMPEMF): %.emf: %.pdf
-	@inkscape --export-area-drawing --export-emf=$@ $<
-
-#	@pstoedit -q -adt -pta -f "emf" $< $@
-
-#> /dev/null || echo "Ignore EMF!"
