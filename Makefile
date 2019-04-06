@@ -84,4 +84,6 @@ $(COMPEPS): %.eps: %.pdf
 
 # EMF generation from PDF files
 $(COMPEMF): %.emf: %.pdf
-	@pstoedit -q -adt -pta -f "emf" $< $@ > /dev/null || echo "Ignore EMF!"
+	@pstoedit -q -adt -pta -f "emf" $< $@
+
+#> /dev/null || echo "Ignore EMF!"
