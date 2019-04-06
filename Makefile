@@ -76,7 +76,7 @@ $(TEX2PDF): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.tex
 
 # PNG generation from PDF files
 $(COMPPNG): %.png: %.pdf
-	convert -density $(DPI) $< $@
+	pdftoppm -r $(DPI) -png $< > $@
 
 # EPS generation from PDF files
 $(COMPEPS): %.eps: %.pdf
